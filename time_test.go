@@ -175,3 +175,31 @@ func Test_GetDay(t *testing.T) {
 		})
 	}
 }
+
+func Test_GetGivenDateTimeInCorrectFormat(t *testing.T) {
+	testCases := []struct {
+		input    time.Time
+		expected string
+	}{
+		{
+			input:    time.Date(2023, time.September, 22, 12, 30, 45, 999000000, time.UTC),
+			expected: "2023-09-22T12:30:45.999Z",
+		},
+		{
+			input:    time.Date(1990, time.May, 5, 10, 15, 30, 500000000, time.UTC),
+			expected: "1990-05-05T10:15:30.5Z",
+		},
+		{
+			input:    time.Date(2021, time.December, 31, 23, 59, 59, 999999999, time.UTC),
+			expected: "2021-12-31T23:59:59.999Z",
+		},
+	}
+	for _, testCase := range testCases {
+		t.Run(testCase.expected, func(t *testing.T) {
+			result := GetGivenDateTimeInCorrectFormat(testCase.input)
+			if result != testCase.expected {
+				t.Errorf("Expected %s, but got %s", testCase.expected, result)
+			}
+		})
+	}
+}

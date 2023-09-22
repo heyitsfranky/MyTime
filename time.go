@@ -23,6 +23,10 @@ func GetCurrentDateTime() string {
 	return now.Format("2006-01-02T15:04:05Z")
 }
 
+func GetGivenDateTimeInCorrectFormat(givenDateTime time.Time) string {
+	return givenDateTime.Format("2006-01-02T15:04:05.999Z")
+}
+
 func GetCurrentDate() string {
 	now := time.Now().UTC()
 	return now.Format("2006-01-02T00:00:00Z")
