@@ -1,4 +1,4 @@
-package myTime
+package MyTime
 
 import (
 	"testing"
