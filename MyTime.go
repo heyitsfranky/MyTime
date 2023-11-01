@@ -54,6 +54,12 @@ func IsBefore(timeStr1, timeStr2 string) (bool, error) {
 	return t1.Before(t2), nil
 }
 
+func IsNewWeekTomorrow() bool {
+	now := time.Now()
+	tomorrow := now.Add(24 * time.Hour)
+	return tomorrow.Weekday() == time.Monday
+}
+
 // per ISO8601, a week starts with "Monday" thus Monday is "0"
 func GetDay(dateStr string) int {
 	layout := "2006-01-02T15:04:05.999Z"
