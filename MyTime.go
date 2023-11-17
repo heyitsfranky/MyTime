@@ -4,54 +4,42 @@ import (
 	"time"
 )
 
-func IsDateTimeFormatCorrect(input string) bool {
-	layout := "2006-01-02T15:04:05.999Z"
-	_, err := time.Parse(layout, input)
-	if err != nil {
-		return false
-	}
-	return err == nil
+func GetCurrentDateTime() int64 {
+	return time.Now().UTC().UnixMilli()
 }
 
-func GetCurrentDateTimeWithMilliseconds() string {
+func GetGivenDateTime(givenDateTime time.Time) int64 {
+	return givenDateTime.UnixMilli()
+}
+
+func GetCurrentDate() int64 {
 	now := time.Now().UTC()
-	return now.Format("2006-01-02T15:04:05.999Z")
+	midnight := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
+	return midnight.UnixMilli()
 }
 
-func GetCurrentDateTime() string {
-	now := time.Now().UTC()
-	return now.Format("2006-01-02T15:04:05Z")
-}
-
-func GetGivenDateTimeInCorrectFormat(givenDateTime time.Time) string {
-	return givenDateTime.Format("2006-01-02T15:04:05.999Z")
-}
-
-func GetCurrentDate() string {
-	now := time.Now().UTC()
-	return now.Format("2006-01-02T00:00:00Z")
-}
-
-func GetYesterdaysDateTime() string {
+func GetYesterdaysDateTime() int64 {
 	yesterday := time.Now().UTC().Add(-24 * time.Hour)
-	return yesterday.Format("2006-01-02T15:04:05Z")
+	return yesterday.UnixMilli()
 }
 
-func GetYesterdaysDate() string {
+func GetYesterdaysDate() int64 {
 	yesterday := time.Now().UTC().Add(-24 * time.Hour)
-	return yesterday.Format("2006-01-02T00:00:00Z")
+	midnight := time.Date(yesterday.Year(), yesterday.Month(), yesterday.Day(), 0, 0, 0, 0, time.UTC)
+	return midnight.UnixMilli()
 }
 
-func IsBefore(timeStr1, timeStr2 string) (bool, error) {
-	t1, err := time.Parse("2006-01-02T15:04:05.999Z", timeStr1)
-	if err != nil {
-		return false, err
-	}
-	t2, err := time.Parse("2006-01-02T15:04:05.999Z", timeStr2)
-	if err != nil {
-		return false, err
-	}
-	return t1.Before(t2), nil
+func IsBefore(time1, time2 int64) bool {
+	t1 := time.UnixMilli(time1)
+	t2 := time.UnixMilli(time2)
+	return t1.Before(t2)
+}
+
+// per ISO8601, a week starts with "Monday" thus Monday is "0"
+func GetDay(input int64) int {
+	t := time.UnixMilli(input)
+	dayOfWeek := int(t.Weekday())
+	return (dayOfWeek + 6) % 7
 }
 
 func IsNewWeekTomorrow() bool {
@@ -60,23 +48,8 @@ func IsNewWeekTomorrow() bool {
 	return tomorrow.Weekday() == time.Monday
 }
 
-// per ISO8601, a week starts with "Monday" thus Monday is "0"
-func GetDay(dateStr string) int {
-	layout := "2006-01-02T15:04:05.999Z"
-	date, err := time.Parse(layout, dateStr)
-	if err != nil {
-		return -1
-	}
-	dayOfWeek := int(date.Weekday())
-	return (dayOfWeek + 6) % 7
-}
-
-func GetCalendarWeekAndYear(date string) (int, int, error) {
-	layout := "2006-01-02T15:04:05.999Z"
-	tn, err := time.Parse(layout, date)
-	if err != nil {
-		return 0, 0, err
-	}
-	year, calendarWeek := tn.ISOWeek()
+func GetCalendarWeekAndYear(input int64) (int, int, error) {
+	t := time.UnixMilli(input)
+	year, calendarWeek := t.ISOWeek()
 	return year, calendarWeek, nil
 }
